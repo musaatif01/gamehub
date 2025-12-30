@@ -1,5 +1,20 @@
 "use client";
 
+export function generateStaticParams() {
+    return [
+        { slug: 'mariokart' },
+        { slug: 'supersmashbros' },
+        { slug: 'geometry-dash' },
+        { slug: 'hexgl' },
+        { slug: 'chess' },
+        { slug: 'wordle' },
+        { slug: 'runner' },
+        { slug: 'snake' },
+        { slug: 'tictactoe' },
+        { slug: 'memory' },
+    ];
+}
+
 import { use, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Navbar } from "@/components/Navbar";
