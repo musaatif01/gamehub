@@ -25,10 +25,10 @@
 }
 
 .dark {
-  --background: #020617;
+  --background: #000000;
   --foreground: #f8fafc;
-  --surface: #0f172a;
-  --border: #1e293b;
+  --surface: #0a0b14;
+  --border: #161b22;
 }
 
 body {

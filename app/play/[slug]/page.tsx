@@ -1,5 +1,20 @@
 "use client";
 
+export function generateStaticParams() {
+    return [
+        { slug: 'mariokart' },
+        { slug: 'supersmashbros' },
+        { slug: 'geometry-dash' },
+        { slug: 'hexgl' },
+        { slug: 'chess' },
+        { slug: 'wordle' },
+        { slug: 'runner' },
+        { slug: 'snake' },
+        { slug: 'tictactoe' },
+        { slug: 'memory' },
+    ];
+}
+
 import { use, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Navbar } from "@/components/Navbar";
@@ -83,7 +98,7 @@ export default function PlayGamePage({ params }: { params: Promise<{ slug: strin
                     <div className="w-full h-full flex flex-col items-center gap-4">
                         <iframe
                             src="https://musaatif01.github.io/supersmashbros/"
-                            className="w-full h-[70vh] border-0 rounded-2xl bg-black"
+                            className="w-full grow min-h-[700px] border-0 rounded-2xl bg-black shadow-2xl"
                             allow="autoplay; fullscreen; gamepad"
                             title="Super Smash Bros"
                         />
@@ -94,7 +109,7 @@ export default function PlayGamePage({ params }: { params: Promise<{ slug: strin
                     <div className="w-full h-full flex flex-col items-center gap-4">
                         <iframe
                             src="https://musaatif01.github.io/hexgl/"
-                            className="w-full h-[70vh] border-0 rounded-2xl bg-black"
+                            className="w-full grow min-h-[700px] border-0 rounded-2xl bg-black shadow-2xl"
                             allow="autoplay; fullscreen; gamepad"
                             title="HexGL"
                         />
@@ -118,9 +133,9 @@ export default function PlayGamePage({ params }: { params: Promise<{ slug: strin
 
             <main className="container mx-auto px-4 py-6 max-w-[1600px]">
                 <div className={`grid grid-cols-1 ${isLargeGame ? '' : 'lg:grid-cols-[1fr_350px]'} gap-6`}>
-                    <div id="game-container" className="flex flex-col gap-4 bg-white dark:bg-slate-950 rounded-3xl shadow-lg p-6 text-foreground overflow-x-auto">
-                        <div className="flex justify-between items-center text-foreground uppercase">
-                            <h1 className="text-2xl font-black capitalize">{slug.replace('-', ' ')}</h1>
+                    <div id="game-container" className="flex flex-col gap-4 bg-white dark:bg-slate-950 rounded-3xl shadow-lg p-4 text-foreground">
+                        <div className="flex justify-between items-center text-foreground uppercase px-2">
+                            <h1 className="text-xl font-black capitalize">{slug.replace('-', ' ')}</h1>
                             <div className="flex gap-2">
                                 <Button
                                     variant="ghost"
@@ -142,7 +157,7 @@ export default function PlayGamePage({ params }: { params: Promise<{ slug: strin
                             </div>
                         </div>
 
-                        <div className="flex-1 flex items-center justify-center bg-surface/50 dark:bg-slate-900/50 rounded-2xl border-2 border-dashed border-border p-4">
+                        <div className="flex-1 flex items-center justify-center bg-surface/50 dark:bg-black/50 rounded-2xl border-2 border-dashed border-border p-2">
                             {renderGame()}
                         </div>
 
@@ -187,28 +202,34 @@ export default function PlayGamePage({ params }: { params: Promise<{ slug: strin
                                 </div>
                                 {gamepads.length > 0 ? (
                                     <div className="space-y-3">
-                                        <div className={`flex items-center gap-2 text-xs bg-white ${isInputActive ? 'text-green-600' : 'text-blue-600'} px-3 py-1.5 rounded-lg font-bold transition-colors duration-200`}>
-                                            <span className={`w-2 h-2 ${isInputActive ? 'bg-green-500 scale-125' : 'bg-green-400'} rounded-full animate-pulse capitalize`} />
-                                            {gamepads.find(g => g.index === selectedGamepadIndex)?.id.split('(')[0] || 'Controller Connected'}
-                                            {isInputActive && <span className="ml-auto text-[10px] animate-bounce">ACTIVE</span>}
+                                        <div className={`flex items-center gap-3 text-xs px-4 py-3 rounded-xl font-bold transition-all duration-200 shadow-md ${isInputActive ? 'bg-cyan-400 text-blue-900 scale-[1.02]' : 'bg-white text-blue-600'}`}>
+                                            <span className={`w-3 h-3 rounded-full ${isInputActive ? 'bg-blue-600 animate-ping' : 'bg-green-400 animate-pulse'}`} />
+                                            <div className="flex flex-col">
+                                                <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Status: {isInputActive ? 'ACTIVE' : 'READY'}</span>
+                                                <span className="truncate max-w-[180px]">
+                                                    {gamepads.find(g => g.index === selectedGamepadIndex)?.id.split('(')[0] || 'Controller Connected'}
+                                                </span>
+                                            </div>
                                         </div>
                                         {gamepads.length > 1 && (
                                             <select
-                                                className="w-full bg-blue-700 border border-blue-500 rounded-lg px-2 py-1 text-xs outline-none focus:ring-1 focus:ring-white"
+                                                className="w-full bg-blue-700 border border-blue-500 rounded-lg px-2 py-1.5 text-xs outline-none focus:ring-1 focus:ring-white"
                                                 value={selectedGamepadIndex || ''}
                                                 onChange={(e) => setSelectedGamepadIndex(Number(e.target.value))}
                                             >
                                                 {gamepads.map(gp => (
                                                     <option key={gp.index} value={gp.index}>
-                                                        {gp.id.substring(0, 20)}...
+                                                        {gp.id.substring(0, 24)}...
                                                     </option>
                                                 ))}
                                             </select>
                                         )}
-                                        <p className="text-[10px] text-blue-200">Gamepad is ready for all supported games!</p>
+                                        <p className="text-[10px] text-blue-200 font-medium">Controls detected. Play on!</p>
                                     </div>
                                 ) : (
-                                    <p className="text-xs text-blue-200 italic">No controller detected. Press any button to connect.</p>
+                                    <div className="bg-black/20 p-4 rounded-xl border border-white/10 backdrop-blur-sm">
+                                        <p className="text-xs text-blue-100 italic">No controller detected. Press any button to connect.</p>
+                                    </div>
                                 )}
                             </div>
                         </div>

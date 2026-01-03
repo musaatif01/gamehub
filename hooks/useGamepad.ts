@@ -14,27 +14,38 @@ export function useGamepad() {
 
     useEffect(() => {
         let rafId: number;
-        let lastInputTime = 0;
 
         const checkInput = () => {
             const gps = navigator.getGamepads();
-            if (selectedGamepadIndex !== null) {
-                const gp = gps[selectedGamepadIndex];
-                if (gp) {
-                    const hasButtonInput = gp.buttons.some(b => b.pressed || b.value > 0);
-                    const hasAxisInput = gp.axes.some(a => Math.abs(a) > 0.1);
+            let active = false;
 
-                    if (hasButtonInput || hasAxisInput) {
-                        setIsInputActive(true);
-                        lastInputTime = Date.now();
-                    } else if (Date.now() - lastInputTime > 1000) {
-                        // Reset activity after 1 second of no input
-                        setIsInputActive(false);
+            for (const gp of gps) {
+                if (gp) {
+                    // Check buttons
+                    for (const button of gp.buttons) {
+                        if (button.pressed || button.value > 0.1) {
+                            active = true;
+                            break;
+                        }
                     }
+                    if (active) break;
+
+                    // Check axes
+                    for (const axis of gp.axes) {
+                        if (Math.abs(axis) > 0.1) {
+                            active = true;
+                            break;
+                        }
+                    }
+                    if (active) break;
                 }
             }
+
+            setIsInputActive(active);
             rafId = requestAnimationFrame(checkInput);
         };
+
+        rafId = requestAnimationFrame(checkInput);
 
         const updateGamepads = () => {
             const gps = navigator.getGamepads();
@@ -58,7 +69,6 @@ export function useGamepad() {
 
         // Initial check
         updateGamepads();
-        rafId = requestAnimationFrame(checkInput);
 
         return () => {
             window.removeEventListener("gamepadconnected", updateGamepads);
